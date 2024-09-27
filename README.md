@@ -1,7 +1,7 @@
 ## Liberchat 
 est une plateforme révolutionnaire de communication en ligne qui propose une alternative aux réseaux sociaux commerciaux.
 
-##Liberchat : 
+## Liberchat : 
 Réinventez la communication en ligne avec une plateforme open source, gratuite, et totalement démocratique.
 
 100% Open Source et Gratuit : Profitez d'une plateforme transparente, sans frais cachés ni publicités intrusives.
@@ -18,5 +18,4 @@ Accessibilité et Inclusivité : Disponible sur toutes les plateformes avec des 
 
 Originalité et Innovation : Découvrez une plateforme unique qui casse les codes des réseaux sociaux traditionnels, sans hiérarchie sociale ni chef de modération.
 
-##
-Rejoignez Liberchat pour une expérience de communication véritablement libre et équitable, façonnée par et pour la communauté.
+## Rejoignez Liberchat pour une expérience de communication véritablement libre et équitable, façonnée par et pour la communauté.
