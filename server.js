@@ -10,6 +10,11 @@ const io = socketIO(server);
 // Définir le dossier public pour servir les fichiers HTML, CSS, JS
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Servir le fichier sitemap.xml
+app.get('/sitemap.xml', (req, res) => {
+    res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
+
 let activeUsers = {}; // Pour garder une trace des utilisateurs actifs
 let banVotes = {}; // Pour stocker les votes de bannissement
 
@@ -28,45 +33,7 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 
-    // Initiation d'un vote pour bannir un utilisateur
-    socket.on('initiate ban vote', (userToBan) => {
-        if (!banVotes[userToBan]) {
-            banVotes[userToBan] = { yes: 0, no: 0, voters: new Set() };
-            io.emit('chat message', `Un vote pour bannir ${userToBan} a été initié. Votez avec /ban <user>`);
-        }
-    });
-
-    // Gérer le vote pour le bannissement d'un utilisateur
-    socket.on('vote ban', (userToBan, vote) => {
-        if (banVotes[userToBan] && !banVotes[userToBan].voters.has(activeUsers[socket.id])) {
-            banVotes[userToBan].voters.add(activeUsers[socket.id]);
-            if (vote === 'yes') {
-                banVotes[userToBan].yes++;
-            } else {
-                banVotes[userToBan].no++;
-            }
-            io.emit('chat message', `${activeUsers[socket.id]} a voté ${vote === 'yes' ? 'oui' : 'non'} pour bannir ${userToBan}.`);
-
-            // Vérifie si tous les utilisateurs ont voté
-            if (banVotes[userToBan].voters.size === Object.keys(activeUsers).length) {
-                finalizeBanVote(userToBan);
-            }
-        }
-    });
-
-    // Finaliser le vote de bannissement
-    function finalizeBanVote(userToBan) {
-        const totalVotes = banVotes[userToBan].yes + banVotes[userToBan].no;
-        const yesPercentage = banVotes[userToBan].yes / totalVotes;
-        
-        if (yesPercentage >= 0.75) { // 75% pour le bannissement
-            io.emit('chat message', `${userToBan} a été banni du chat par vote de la communauté.`);
-            delete activeUsers[userToBan]; // Retire l'utilisateur des utilisateurs actifs
-        } else {
-            io.emit('chat message', `Le vote pour bannir ${userToBan} n'a pas atteint la majorité requise.`);
-        }
-        delete banVotes[userToBan]; // Supprime le vote de bannissement
-    }
+    
 
     // Lorsqu'un utilisateur se déconnecte
     socket.on('disconnect', () => {
@@ -83,4 +50,3 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
     console.log('Serveur lancé sur le port 3000');
 });
-
