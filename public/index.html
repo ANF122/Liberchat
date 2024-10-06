@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liberchat - Communication Libre et Anarchiste</title>
+    <style>
+        :root {
+            --primary-color: #ff4500;
+            --secondary-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --accent-color: #ffd700;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .highlight {
+            color: var(--accent-color);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent-color);
+            color: var(--secondary-color);
+            padding: 12px 24px;
+            margin-top: 20px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cta-button:hover {
+            background: transparent;
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease forwards; /* Animation d'apparition */
+        }
+
+        .feature-box h3 {
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #chat-container {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: var(--secondary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255,69,0,0.3);
+        }
+
+        #chat-header {
+            background: var(--primary-color);
+            color: var(--text-color);
+            padding: 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chat-messages {
+            height: 380px;
+            overflow-y: scroll;
+            padding: 15px;
+        }
+
+        #chat-input {
+            display: flex;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        #message-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.2);
+            color: var(--text-color);
+        }
+
+        #send-button {
+            background: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-button:hover {
+            background: var(--accent-color);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: var(--primary-color);
+            color: var(--text-color);
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .system-message {
+            background: rgba(255,255,255,0.1);
+            font-style: italic;
+        }
+
+        #ban-vote-container {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        #fullscreen-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Bienvenue sur <span class="highlight">Liberchat</span></h1>
+            <p>Libérez votre communication avec une plateforme anarchiste, libre et sans compromis.</p>
+            <a href="#" class="cta-button" id="join-button">Rejoignez la révolution</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="features">
+            <div class="feature-box" id="fullscreen-feature">
+                <h3>Plein Écran</h3>
+                <p>Plongez dans un espace de discussion sans distraction.  Le mode plein écran est disponible pour une expérience immersive.</p>
+            </div>
+            <div class="feature-box" id="ban-feature">
+                <h3>Ici, nous croyons en une communication sans autorité, où les idées s'épanouissent dans un environnement collaboratif.</h3>
+                <p>Ici, nous croyons en une communication sans autorité, où les idées s'épanouissent dans un environnement collaboratif. Nous nous engageons à créer un espace où chaque utilisateur se sent libre d'exprimer ses pensées et d'interagir sans crainte de jugement.</p>
+            </div>
+            <div class="feature-box" id="community-vote-feature">
+                <h3>"Liberchat : Un espace de liberté où chaque voix compte.</h3>
+                <p>Dans cet espace, nous croyons en une communication sans autorité, où les idées s'épanouissent dans un environnement collaboratif. Rejoignez-nous pour construire un monde sans chaînes, un espace où l'égalité et la solidarité priment.
+                Exprimez-vous librement, sans peur du jugement. Chaque opinion a de la valeur. Ensemble, défendons nos valeurs communes : la liberté, l'égalité et la justice.</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <span>Liberchat</span>
+            <button id="fullscreen-button">Plein Écran</button>
+        </div>
+        <div id="chat-messages"></div>
+        <div id="chat-input">
+            <input type="text" id="message-input" placeholder="Exprimez-vous librement...">
+            <button id="send-button">➤</button>
+        </div>
+        <div id="ban-vote-container">
+            <h3>Vote pour bannir un utilisateur</h3>
+            <p id="ban-user"></p>
+            <button id="vote-yes">Oui</button>
+            <button id="vote-no">Non</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const socket = io();  // Connexion à Socket.IO
+
+        const joinButton = document.getElementById('join-button');
+        const chatContainer = document.getElementById('chat-container');
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const fullscreenButton = document.getElementById('fullscreen-button');
+        const banVoteContainer = document.getElementById('ban-vote-container');
+        const banUserElement = document.getElementById('ban-user');
+
+        let username = '';
+
+        // Fonction pour passer en plein écran
+        fullscreenButton.addEventListener('click', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                chatContainer.requestFullscreen();
+            }
+        });
+
+        // Lorsqu'on clique sur "Rejoindre la révolution", on demande le nom d'utilisateur
+        joinButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            username = prompt("Entrez votre pseudonyme révolutionnaire:");
+            if (username) {
+                chatContainer.style.display = 'block';
+                addMessage(`Bienvenue ${username} !`, 'system');
+                socket.emit('register', username); // Envoi du nom d'utilisateur au serveur
+            }
+        });
+
+        // Envoi d'un message lorsque l'utilisateur appuie sur "Enter" ou sur le bouton d'envoi
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Fonction pour envoyer un message
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message && username) {
+                socket.emit('chat message', `${username}: ${message}`);
+                messageInput.value = '';
+            }
+        }
+
+        // Afficher les messages reçus du serveur
+        socket.on('chat message', (msg) => {
+            addMessage(msg, 'user');
+        });
+
+        // Ajouter un message au chat
+        function addMessage(message, type) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `${type}-message`);
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Fonction pour sélectionner un utilisateur à bannir
+        function selectUserToBan(userToBan) {
+            banUserElement.textContent = `Voulez-vous bannir ${userToBan} ?`;
+            banVoteContainer.style.display = 'block';
+        }
+
+        // Gérer le vote pour le bannissement d'un utilisateur
+        document.getElementById('vote-yes').addEventListener('click', () => {
+            addMessage(`${username} a voté pour bannir ${banUserElement.textContent.split(' ')[3]}.`, 'system');
+            banVoteContainer.style.display = 'none';
+        });
+
+        document.getElementById('vote-no').addEventListener('click', () => {
+            addMessage(`${username} a voté contre le bannissement de ${banUserElement.textContent.split(' ')[3]}.`, 'system');
+            banVoteContainer.style.display = 'none';
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "liberchat",
+  "version": "1.0.0",
+  "description": "Liberchat est une plateforme révolutionnaire de communication en ligne qui propose une alternative aux réseaux sociaux commerciaux.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "socket.io": "^4.8.0"
+  }
+}
