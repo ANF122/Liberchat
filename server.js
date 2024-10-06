@@ -15,6 +15,16 @@ app.get('/sitemap.xml', (req, res) => {
     res.sendFile(path.join(__dirname, 'sitemap.xml'));
 });
 
+// Servir le fichier de vérification Google
+app.get('/google800061437bed62c6.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'google800061437bed62c6.html'));
+});
+
+// Route pour servir le fichier HTML principal
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 let activeUsers = {}; // Pour garder une trace des utilisateurs actifs
 let banVotes = {}; // Pour stocker les votes de bannissement
 
@@ -32,8 +42,6 @@ io.on('connection', (socket) => {
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg);
     });
-
-    
 
     // Lorsqu'un utilisateur se déconnecte
     socket.on('disconnect', () => {
